@@ -1,6 +1,9 @@
-import { cart } from "../data/cart.js";
+import { cart, addToCart } from "../data/cart.js";
 import { products } from "../data/products.js";
+
 let productsHTML = '';
+
+
 
 products.forEach(product => {
   productsHTML += `<div class="product-container">
@@ -53,56 +56,46 @@ products.forEach(product => {
   </div>`;
 });
 
+
 document.querySelector('.js-products-grid').innerHTML = productsHTML;
 
-document.querySelectorAll('.js-add-to-cart').forEach( button => {
+function updateCartQuantity(){
+  let cartQuantity = 0;
+
+  cart.forEach(cartItem => {
+    cartQuantity += cartItem.quantity;
+  });
+
+  document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+
+  console.log(cartQuantity);
+};
+
+function displayAddedMassage(productId){
   let addedMassageTimeoutId;
+  const addedMassage =  document.querySelector(`.js-added-${productId}`);
+  addedMassage.classList.add('added-to-cart-show');
+
+  if (addedMassageTimeoutId){
+    clearTimeout(addedMassageTimeoutId);
+  }
+
+  const timeoutId = setTimeout(()=>{
+    addedMassage.classList.remove('added-to-cart-show');
+  }, 2000);
+
+  addedMassageTimeoutId = timeoutId;
+};
+
+document.querySelectorAll('.js-add-to-cart').forEach( button => {
 
   button.addEventListener('click', () => {
     const {productId} = button.dataset;
-    const productQuantity = document.querySelector(`.js-quantity-selector-${productId}`).value;
-    
-    let matchingItem;
 
-    const addedMassage =  document.querySelector(`.js-added-${productId}`);
-    addedMassage.classList.add('added-to-cart-show');
-
-    if (addedMassageTimeoutId){
-      clearTimeout(addedMassageTimeoutId);
-    }
-
-    const timeoutId = setTimeout(()=>{
-      addedMassage.classList.remove('added-to-cart-show');
-    }, 2000);
-
-    addedMassageTimeoutId = timeoutId;
-
-    cart.forEach(item =>{
-        if (productId === item.productId){
-          matchingItem = item;
-        };
-    });
-
-    if (matchingItem){
-      matchingItem.quantity += Number(productQuantity);
-    } else {
-      cart.push({
-        productId,
-        quantity: Number(productQuantity)
-      });
-    };
-
-    let cartQuantity = 0;
-
-    cart.forEach(item => {
-      cartQuantity += item.quantity;
-    });
-
-    document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
-
-    console.log(cartQuantity);
+    addToCart(productId);
+    updateCartQuantity();
+    displayAddedMassage(productId);
 
     console.log(cart);
-
   });
 });
