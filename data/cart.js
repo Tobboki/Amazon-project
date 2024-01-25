@@ -40,6 +40,26 @@ function saveCartToStorage(){
   localStorage.setItem('cart',JSON.stringify(cart));
 };
 
+export function updateQuantity(productId, newQuantity){
+  cart.forEach( cartItem => {
+    if (cartItem.productId === productId){
+      cartItem.quantity = newQuantity
+    }
+  });
+
+  saveCartToStorage();
+};
+
+export function calculateCartQuantity(){
+  let cartQuantity = 0;
+
+  cart.forEach(cartItem => {
+    cartQuantity += cartItem.quantity;
+  });
+
+  return cartQuantity;
+}
+
 export function removeFromCart(productId){
   const newCart = [];
   cart.forEach(cartItem => {
