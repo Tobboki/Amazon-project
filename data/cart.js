@@ -101,6 +101,10 @@ export function loadCart(fun){
     fun();
   });
 
+  xhr.addEventListener('error', (error) => {
+    console.log('Unexpected error. please try again later.')
+  })
+
   xhr.open('GET', 'https://supersimplebackend.dev/cart/');
   xhr.send();
 }
