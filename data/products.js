@@ -56,22 +56,24 @@ export function getProduct(productId){
 
 export let products = [];
 
-export function loadProducts(fun){
-  const xhr = new XMLHttpRequest();
+export function loadProductsFetch(){
+  const promise = fetch(
+    'https://supersimplebackend.dev/products/'
 
-  xhr.addEventListener('load', () => {
-    products = JSON.parse(xhr.response).map(productDetails => {
+  ).then((response) => {
+    return response.json();
+
+  }).then((productData) => {
+    products = productData.map(productDetails => {
       if (productDetails.type === 'clothing') {
         return new Clothing(productDetails);
       }
       return new Product(productDetails);
     });
 
-    fun()
   });
 
-  xhr.open('GET', 'https://supersimplebackend.dev/products/');
-  xhr.send();
+  return promise;
 }
 
 /*
